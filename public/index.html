@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            font-weight: 200;
+            font-style: normal;
+
+        }
+
+        /* Custom Styles */
+        .custom-card {
+            padding: 0 30px;
+            margin: 0 auto;
+        }
+
+        .custom-input {
+            font-weight: bold;
+            font-size: 30px;
+            width: 115%;
+            height: 100px;
+            padding: 10px;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        @media (max-width: 575.98px) {
+            .custom-input {
+                font-size: 18px;
+                height: 50px;
+                width: 50%;
+                margin: 0 auto;
+            }
+        }
+
+        .square-btn {
+            width: 100%;
+            padding-top: 100%;
+            position: relative;
+            border: none;
+            outline: none;
+        }
+
+        .square-btn-content {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #913E98;
+            color: white;
+            font-size: 1.3rem;
+            border-radius: 8px;
+        }
+
+        .square-btn-content.bgcolor {
+            background-color: #478ECC;
+            width: 111%;
+        }
+
+        /* .square-btn-content.color {
+            background-color: #8AC44B;
+        } */
+        .square-btn-content:focus {
+            background: #8AC44B;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto 0;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .modal-body {
+            text-align: center;
+            min-height: 250px;
+            margin-top: 30px;
+        }
+
+        .modal-body1 {
+            text-align: center;
+            margin: 30px 0;
+
+        }
+
+        #displayAmount {
+            font-size: 1.7rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        #DebitSaleDetails {
+            font-size: 1.7rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .cancel-button {
+            margin-top: 20px;
+            display: block;
+            width: 100px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .modal-dialog {
+            margin-top: 200px;
+        }
+
+        .box-shadow {
+            box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+        }
+
+        .square-btn1 {
+            width: 90%;
+            height: 50%;
+            position: relative;
+            border: none;
+            outline: none;
+            margin-top: 30px;
+        }
+
+        .saleButton1:focus,
+        .saleButton1.selected .square-btn-content,
+        .saleButton1:focus .square-btn-content {
+            background-color: green;
+        }
+
+        #saleButton2:focus,
+        #saleButton2.selected .square-btn-content,
+        #saleButton2:focus .square-btn-content {
+            background-color: green;
+        }
+
+        .numeric-keypad {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 399px;
+            margin-top: 20px;
+        }
+
+        .numeric-key {
+            width: 80px;
+            height: 80px;
+            margin: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #478ECC;
+            color: white;
+            font-size: 24px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .numeric-key.delete {
+            background-color: #e74c3c;
+        }
+
+        .numeric-key.clear {
+            background-color: #f39c12;
+        }
+
+        /* @media(max-width:1091px){
+            .numeric-key {
+            width:80px;
+            height: 80px;
+           
+        }
+        .numeric-keypad {
+            width:300px;
+            margin-left: 40px;
+           
+        }
+        } */
+        @media(max-width:1100px) {
+            .numeric-key {
+                width: 80px;
+                height: 80px;
+
+            }
+
+            .numeric-keypad {
+                width: 300px;
+                margin-left: 40px;
+
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .custom-card {
+                padding: 0 20px;
+            }
+
+            .custom-input {
+                font-size: 18px;
+                height: 50px;
+            }
+
+            .numeric-key {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
+
+            .numeric-keypad {
+                display: none;
+            }
+        }
+
+        .card-body {
+            padding: 0 !important;
+        }
+
+        input[type="number"]::-webkit- outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .btn-active {
+            background-color: #8AC44B;
+            border-color: #8AC44B;
+            color: white;
+            /* Optional: changes the text color to white for better contrast */
+        }
+
+        .hiddenSale {
+            visibility: hidden;
+        }
+
+        /* Mobile Specific Button Styling */
+        @media (max-width: 768px) {
+            .mobile-btn {
+                padding: 50px 0;
+                margin: 10px 0;
+                font-size: 14px;
+                /* Smaller font size */
+            }
+
+            .temp {
+                margin-bottom: 50px;
+            }
+
+            .bgcolor {
+                padding: 26px 0;
+                width: 30%;
+
+            }
+
+            .square-btn-content {
+                font-size: 12px;
+                /* Smaller text size for better fit */
+            }
+
+            .col-6 {
+                max-width: 50%;
+                flex: 0 0 50%;
+            }
+
+            .buttonSec {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div style="height: 100vh;">
+        <!-- Header Section -->
+        <!-- <header class="box-shadow text-white py-2">
+            <div class="container d-flex align-items-center">
+                <img src="../../static/images/O2G_new.png" alt="Logo" class="mr-3" style="height: 50px;">
+            </div>
+        </header> -->
+
+        <!-- Main Content Section -->
+        <main>
+            <div class="card custom-card">
+                <div class="card-body">
+                    <form id="paymentForm" onsubmit="event.preventDefault();">
+                        <div class="row">
+                            <div class="col-md-4 mt-4 d-none d-md-block" style="margin: 0 auto;">
+                                <div class="d-flex">
+
+                                </div>
+                                <input type="text" id="autoFocusInput" name="amount" class="form-control custom-input"
+                                    placeholder="Enter Amount" inputmode="numeric" required readonly>
+                                <div class="numeric-keypad">
+                                    <div class="numeric-key">1</div>
+                                    <div class="numeric-key">2</div>
+                                    <div class="numeric-key">3</div>
+                                    <div class="numeric-key">4</div>
+                                    <div class="numeric-key">5</div>
+                                    <div class="numeric-key">6</div>
+                                    <div class="numeric-key">7</div>
+                                    <div class="numeric-key">8</div>
+                                    <div class="numeric-key">9</div>
+                                    <div class="numeric-key clear">C</div>
+                                    <div class="numeric-key">0</div>
+                                    <div class="numeric-key delete">&larr;</div>
+                                    <div></div>
+                                    <div class="numeric-key">.</div> <!-- Decimal point button -->
+                                    <div></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-7 buttonSec" style="margin-top: 100px;">
+                                <!-- Credit Section -->
+                                <div class="row g-3">
+                                    <div class="col-12 col-md-3 col-sm-12 temp">
+                                        <div class="square-btn1">
+                                            <span class="square-btn-content bgcolor">Credit</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Mobile buttons: Sale, Void, and Refund -->
+                                    <div class="col-4 col-md-3 d-block d-md-none">
+                                        <button type="button" class="square-btn mobile-btn saleButton1"
+                                            data-toggle="modal" data-target="#creditSaleMobileModal">
+                                            <span class="square-btn-content">Sale</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-4 col-md-3 d-block d-md-none">
+                                        <button type="button" class="square-btn mobile-btn saleButton1">
+                                            <span class="square-btn-content">Void</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-4 col-md-3 d-block d-md-none">
+                                        <button type="button" class="square-btn mobile-btn saleButton1"
+                                            data-toggle="modal" data-target="#creditRefundModal">
+                                            <span class="square-btn-content">Refund</span>
+                                        </button>
+                                    </div>
+
+                                    <!-- Desktop buttons -->
+                                    <div class="col-6 col-md-3 d-none d-md-block">
+                                        <button class="square-btn saleButton1" data-toggle="modal"
+                                            data-target="#loaderModal">
+                                            <span class="square-btn-content">Sale</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-6 col-md-3 d-none d-md-block">
+                                        <button type="button" class="square-btn saleButton1" onclick="openVoidModal()">
+                                            <span class="square-btn-content">Void</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-6 col-md-3 d-none d-md-block">
+                                        <button type="button" class="square-btn saleButton1" data-toggle="modal"
+                                            data-target="#creditRefundModal">
+                                            <span class="square-btn-content">Refund</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Debit Section -->
+                                <div class="row g-3 mt-3">
+                                    <div class="col-12 col-md-3 temp">
+                                        <div class="square-btn1">
+                                            <span class="square-btn-content bgcolor">Debit</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3 d-block d-md-none">
+                                        <button class="square-btn mobile-btn saleButton1" type="button"
+                                            data-toggle="modal" data-target="#debitSaleMobileModal">
+                                            <span class="square-btn-content">Sale</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-6 col-md-3 d-none d-md-block">
+                                        <button class="square-btn mobile-btn saleButton1" type="button"
+                                            data-toggle="modal" data-target="#debiSaleModal">
+                                            <span class="square-btn-content">Sale</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <button type="button" class="square-btn mobile-btn saleButton1"
+                                            data-toggle="modal" data-target="#debitVoidModal">
+                                            <span class="square-btn-content">Void</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-6 col-md-3  "></div>
+                                </div>
+
+                                <!-- EBT Section -->
+                                <div class="row g-3 mt-3">
+                                    <div class="col-12 col-md-3 temp">
+                                        <div class="square-btn1">
+                                            <span class="square-btn-content bgcolor">EBT</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Mobile and Desktop: Ensure 3 buttons are in a row on mobile -->
+                                    <div class="col-6 col-md-3 d-none d-md-block">
+                                        <button class="square-btn saleButton1" data-toggle="modal"
+                                            data-target="#EBTSaleModal" id="EBTSale">
+                                            <span class="square-btn-content">Food SaleD</span>
+                                        </button>
+                                    </div>
+                                    <div class="col-4 col-md-3 d-block d-md-none">
+                                        <button type="button" class="square-btn mobile-btn saleButton1"
+                                            data-toggle="modal" data-target="#EBTSaleMobileModal">
+                                            <span class="square-btn-content">Food SaleM</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-4 col-md-3">
+                                        <button class="square-btn mobile-btn saleButton1">
+                                            <span class="square-btn-content">Food Balance</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-4 col-md-3">
+                                        <button class="square-btn mobile-btn saleButton1" data-toggle="modal"
+                                            data-target="#EBTRefundModal">
+                                            <span class="square-btn-content">Food Refund</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Credit Void Modal -->
+    <div class="modal fade" id="creditVoidModal" tabindex="-1" role="dialog" aria-labelledby="creditVoidModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="creditvoidForm">
+                        <div class="form-group">
+                            <h6 style="font-size: 20px;">Transaction Type: Credit Void</h6>
+                            <label for="creditVoidAmount">Enter Tran.No OR Card(Last 4 Digit)</label>
+                            <input type="number" name="creditVoid" class="form-control" id="creditVoidAmount"
+                                placeholder="Enter Details" oninput="limitInputLength(this)">
+                            <button type="submit" class="btn btn-primary mt-4" id="submitVoid">Submit</button>
+                            <button type="button" class="btn btn-secondary mt-4" id="closeModal"
+                                data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Credit Refund modal -->
+    <div class="modal fade" id="creditRefundModal" tabindex="-1" role="dialog" aria-labelledby="creditRefundModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="creditRefundForm">
+                        <div class="form-group">
+                            <h6 style="font-size: 20px;">Transaction Type: Credit Refund</h6>
+                            <label for="creditRefundAmount">Enter Amount</label>
+                            <input type="number" name="creditRefund" class="form-control" id="creditRefundAmount"
+                                placeholder="Enter Amount" step="0.01" min="0">
+                            <button type="submit" class="btn btn-primary mt-4" id="submitVoid">Submit</button>
+                            <button type="button" class="btn btn-secondary mt-4" id="closeModal"
+                                data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- EBT Refund Modal -->
+    <div class="modal fade" id="EBTRefundModal" tabindex="-1" role="dialog" aria-labelledby="EBTRefundModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="EBTRefundForm">
+                        <div class="form-group">
+                            <h6 style="font-size: 20px;">Transaction Type: EBT Refund</h6>
+                            <label for="EBTRefundAmount">Enter Amount</label>
+                            <input type="number" name="EBTRefund" class="form-control" id="EBTRefundAmount"
+                                placeholder="Enter Amount" step="0.01" min="0">
+                            <button type="submit" class="btn btn-primary mt-4" id="submitVoid">Submit</button>
+                            <button type="button" class="btn btn-secondary mt-4" id="closeModal"
+                                data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Debit Void modal -->
+    <div class="modal fade" id="debitVoidModal" tabindex="-1" role="dialog" aria-labelledby="debitVoidModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="debitvoidForm">
+                        <div class="form-group">
+                            <h6 style="font-size: 20px;">Transaction Type: Debit Void</h6>
+                            <label for="debitVoidAmount">Enter Tran.No OR Card(Last 4 Digit)</label>
+                            <input type="number" name="debitVoid" class="form-control" id="debitVoidAmount"
+                                placeholder="Enter Details" step="0.01" min="0" oninput="limitInputLength(this)"
+                                min="1000" max="9999">
+                            <button type="submit" class="btn btn-primary mt-4" id="submitVoid">Submit</button>
+                            <button type="button" class="btn btn-secondary mt-4" id="closeModal"
+                                data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Credit Sale Mobile -->
+    <div class="modal fade" id="creditSaleMobileModal" tabindex="-1" role="dialog"
+        aria-labelledby="creditSaleMobileModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="creditSaleMobileForm">
+                        <div class="form-group">
+                            <h6 style="font-size: 20px;">Transaction Type: Credit Sale</h6>
+                            <label for="creditSaleMobileAmount">Enter Amount</label>
+                            <input type="number" name="creditSaleMobile" class="form-control"
+                                id="creditSaleMobileAmount" step="0.01" min="0" placeholder="Enter Amount">
+                            <button type="submit" class="btn btn-primary mt-4" id="submitVoid">Submit</button>
+                            <button type="button" class="btn btn-secondary mt-4" id="closeModal"
+                                data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Debit Sale Mobile -->
+
+    <div class="modal fade" id="debitSaleMobileModal" tabindex="-1" role="dialog"
+        aria-labelledby="debitSaleMobileModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="debitSaleMobileForm">
+                        <div class="form-group">
+                            <h6 style="font-size: 20px;">Transaction Type: Debit Sale</h6>
+                            <label for="creditSaleMobileAmount">Enter Amount</label>
+                            <input type="number" name="debitSaleMobile" class="form-control" id="debitSaleMobileAmount"
+                                placeholder="Enter Amount" step="0.01" min="0">
+                            <button type="submit" class="btn btn-primary mt-4" id="submitVoid">Submit</button>
+                            <button type="button" class="btn btn-secondary mt-4" id="closeModal"
+                                data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EBT Mobile Sale Modal -->
+    <div class="modal fade" id="EBTSaleMobileModal" tabindex="-1" role="dialog"
+        aria-labelledby="EBTSaleMobileModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="EBTSaleMobileForm">
+                        <div class="form-group">
+                            <h6 style="font-size: 20px;">Transaction Type: EBT Sale</h6>
+                            <label for="EBTSaleMobileAmount">Enter Amount</label>
+                            <input type="number" name="EBTSaleMobile" class="form-control" id="EBtSaleMobileAmount"
+                                placeholder="Enter Amount" step="0.01" min="0">
+                            <button type="submit" class="btn btn-primary mt-4" id="submitVoid">Submit</button>
+                            <button type="button" class="btn btn-secondary mt-4" id="closeModal"
+                                data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loader Modal -->
+    <div class="modal fade" id="loaderModal" tabindex="-1" role="dialog" aria-labelledby="loaderModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h6 style="font-size: 20px;">Transaction Type: Credit Sale</h6>
+                    <p id="displayAmount"></p>
+                    <div class="loader"></div>
+                    <p>Waiting For Customers Response...</p>
+                    <button type="button" class="btn btn-secondary cancel-button" onclick="reload()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Loader Void Modal -->
+    <div class="modal fade" id="voidLoaderModal" tabindex="-1" role="dialog" aria-labelledby="loaderModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h6 style="font-size: 20px;">Transaction Type: Credit Void </h6>
+                    <!-- <p id="displayVoidDetails"></p> -->
+                    <div class="loader"></div>
+                    <p>Waiting For Response...</p>
+                    <button type="button" class="btn btn-secondary cancel-button" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Loader Refund modal -->
+    <div class="modal fade" id="refundLoaderModal" tabindex="-1" role="dialog" aria-labelledby="refundloaderModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h6 style="font-size: 20px;">Transaction Type: Credit Refund </h6>
+                    <p id="displayRefundDetails"></p>
+                    <div class="loader"></div>
+                    <p>Waiting For Response...</p>
+                    <button type="button" class="btn btn-secondary cancel-button" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EBT Loader Modal -->
+    <div class="modal fade" id="EBTrefundLoaderModal" tabindex="-1" role="dialog"
+        aria-labelledby="EBTrefundloaderModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h6 style="font-size: 20px;">Transaction Type: EBT Refund </h6>
+                    <p id="displayEBTRefundDetails"></p>
+                    <div class="loader"></div>
+                    <p>Waiting For Response...</p>
+                    <button type="button" class="btn btn-secondary cancel-button" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Debit Void Loader Modal -->
+    <div class="modal fade" id="voidDebitLoaderModal" tabindex="-1" role="dialog" aria-labelledby="loaderModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h6 style="font-size: 20px;">Transaction Type: Credit Void </h6>
+                    <!-- <p id="displayDebitVoidDetails"></p> -->
+                    <div class="loader"></div>
+                    <p>Waiting For Response...</p>
+                    <button type="button" class="btn btn-secondary cancel-button" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loader Debit Sale modal -->
+    <div class="modal fade" id="debiSaleModal" tabindex="-1" role="dialog" aria-labelledby="debiSaleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h6 style="font-size: 20px;">Transaction Type: Debit Sale</h6>
+                    <p id="DebitSaleDetails"></p>
+                    <div class="loader"></div>
+                    <p>Waiting For Response...</p>
+                    <button type="button" class="btn btn-secondary cancel-button" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- creditSaleMobileModalLoader -->
+    <div class="modal fade" id="creditSaleMobileModalLoader" tabindex="-1" role="dialog"
+        aria-labelledby="creditSaleMobileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h6 style="font-size: 20px;">Transaction Type: EBT Sale</h6>
+                    <p id="EBTSaleMobileDetails"></p>
+                    <div class="loader"></div>
+                    <p>Waiting For Response...</p>
+                    <button type="button" class="btn btn-secondary cancel-button" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EBT Sale mobile -->
+    <div class="modal fade" id="EBTSaleMobileLoaderModal" tabindex="-1" role="dialog"
+        aria-labelledby="EBTaleMobileLoaderModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h6 style="font-size: 20px;">Transaction Type: Credit Sale</h6>
+                    <p id="creditSaleMobileDetails"></p>
+                    <div class="loader"></div>
+                    <p>Waiting For Response...</p>
+                    <button type="button" class="btn btn-secondary cancel-button" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Debit Sale Mobile Loader  -->
+    <div class="modal fade" id="debitSaleMobileModalLoader" tabindex="-1" role="dialog"
+        aria-labelledby="debitSaleMobileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h6 style="font-size: 20px;">Transaction Type: Debit Sale</h6>
+                    <p id="debitSaleMobileDetails"></p>
+                    <div class="loader"></div>
+                    <p>Waiting For Response...</p>
+                    <button type="button" class="btn btn-secondary cancel-button" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- EBT sale Modal -->
+    <div class="modal fade" id="EBTSaleModal" tabindex="-1" role="dialog" aria-labelledby="EBTSaleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h6 style="font-size: 20px;">Transaction Type: EBT Sale</h6>
+                    <p id="EBTSaleDetails"></p>
+                    <div class="loader"></div>
+                    <p>Waiting For Response...</p>
+                    <button type="button" class="btn btn-secondary cancel-button" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Success Modal -->
+
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog " role="document">
+            <div class="modal-content">
+                <div class="modal-body1">
+                    <h5>Payment Successful!</h5>
+                    <i class="bi bi-check-circle" style="font-size: 60px; color: green;"></i>
+                    <button type="button" class="btn btn-success cancel-button" onclick="reload()">Ok</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog " role="document">
+            <div class="modal-content">
+                <div class="modal-body1">
+                    <h5 id="errorMessage"></h5>
+                    <i class="bi bi-x-circle" style="font-size: 60px; color: red; "></i>
+                    <button type="button" class="btn btn-danger cancel-button" onclick="reload()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unknown Status Modal -->
+    <div class="modal fade" id="unknownStatusModal" tabindex="-1" role="dialog"
+        aria-labelledby="unknownStatusModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Unknown status received. Please try again later.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        let enteredAmount = '';
+        document.getElementById('autoFocusInput').addEventListener('input', function (event) {
+            enteredAmount = event.target.value;  // Store the input value in the global variable
+            console.log("Entered Amount:", enteredAmount);  // Log the value
+        });
+        function openEBTSale() {
+
+
+            $('#EBTSaleModal').modal('show');
+        }
+        function openVoidModal() {
+            $('.saleButton1').removeClass('selected');
+            $(document.activeElement).addClass('selected');
+            $('#creditVoidModal').modal('show');
+        }
+        function limitInputLength(input) {
+            if (input.value.length > 4) {
+                input.value = input.value.slice(0, 4); // Restrict to 4 digits
+            }
+        }
+        function reload() {
+            $('#successModal').modal('hide');
+            $('#errorModal').modal('hide');
+            window.location.reload();
+
+        }
+        $(document).ready(function () {
+            // Function to get 'epi' from URL parameters
+            function getEpiFromUrl() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('epii');
+            }
+
+            // Open loader modal and display the amount
+            function openLoaderModal() {
+                var amount = $('#autoFocusInput').val();
+                $('.saleButton1').removeClass('selected');
+                $(document.activeElement).addClass('selected');
+                $('#displayAmount').html('<span style="color: green;">Amount:</span> $' + amount);
+                // $('#loaderModal').modal('show');
+            }
+
+            function openVoidLoaderModal() {
+                $('.saleButton1').removeClass('selected');
+                $(document.activeElement).addClass('selected');
+                var amount = $('#creditVoidAmount').val();
+                $('#displayVoidDetails').html('<span style="color: green; font-size:20px; font-weight:bold">Details:</span> <span style="font-size:24px; font-weight:bold">$' + amount + '</span>');
+                $('#voidLoaderModal').modal('show');
+
+            }
+
+            function openRefundLoaderModal() {
+                var amount = $('#creditRefundAmount').val();
+                $('#displayRefundDetails').html('<span style="color: green; font-size:20px; font-weight:bold">Amount:</span> <span style="font-size:24px; font-weight:bold">$' + amount + '</span>');
+                $('#refundLoaderModal').modal('show');
+
+
+            }
+            function openEBTRefundLoaderModal() {
+                var amount = $('#EBTRefundAmount').val();
+                $('#displayEBTRefundDetails').html('<span style="color: green; font-size:20px; font-weight:bold">Amount:</span> <span style="font-size:24px; font-weight:bold">$' + amount + '</span>');
+                $('#EBTrefundLoaderModal').modal('show');
+
+
+            }
+            function openDebitSaleLoaderModal() {
+                var amount = $('#autoFocusInput').val(); // Get the value of the amount field
+                $('#DebitSaleDetails').html('<span style="color: green;">Amount:</span> $' + amount); // Update modal with amount
+                // $('#EBTSaleModal').modal('show'); // Show the modal
+
+            }
+            function openDebitVoidLoaderModal() {
+                var amount = $('#debitVoidAmount').val();
+                $('#displayDebitVoidDetails').html('<span style="color: green; font-size:20px; font-weight:bold">Details:</span> <span style="font-size:24px; font-weight:bold">$' + amount + '</span>');
+                $('#voidDebitLoaderModal').modal('show');
+
+            }
+            function openCreditSaleMobileLoaderModal() {
+                var amount = $('#creditSaleMobileAmount').val();
+                $('#creditSaleMobileDetails').html('<span style="color: green; font-size:20px; font-weight:bold">Amount:</span> <span style="font-size:24px; font-weight:bold">$' + amount + '</span>');
+                $('#creditSaleMobileModalLoader').modal('show');
+            }
+            function opendebitSaleMobileLoaderModal() {
+                var amount = $('#debitSaleMobileAmount').val();
+                $('#debitSaleMobileDetails').html('<span style="color: green; font-size:20px; font-weight:bold">Amount:</span> <span style="font-size:24px; font-weight:bold">$' + amount + '</span>');
+                $('#debitSaleMobileModalLoader').modal('show');
+            }
+            function openEBTSaleLoaderModal() {
+                var amount = $('#autoFocusInput').val(); // Get the value of the amount field
+                $('#EBTSaleDetails').html('<span style="color: green; font-size:20px; font-weight:bold">Amount:</span> <span style="font-size:24px; font-weight:bold">$' + amount + '</span>'); // Update modal with amount
+
+            }
+            function openEBTSaleMobileLoaderModal() {
+                var amount = $('#EBTSaleMobileAmount').val();
+                $('#EBTSaleMobileDetails').html('<span style="color: green; font-size:20px; font-weight:bold">Amount:</span> <span style="font-size:24px; font-weight:bold">$' + amount + '</span>');
+                $('#EBTSaleMobileLoaderModal').modal('show');
+            }
+
+            // Close loader modal and run callback after modal is hidden
+            function closeLoaderModal(callback, message) {
+                const errorMessage = message;
+                console.log("ErrorMessage", errorMessage)
+                $('#loaderModal, #voidLoaderModal, #refundLoaderModal,#debiSaleModal,#voidDebitLoaderModal,#debitSaleMobileModalLoader,#creditSaleMobileModalLoader,#EBTSaleModal, #EBTSaleMobileLoaderModal,#EBTrefundLoaderModal').modal('hide');
+                if (callback && typeof callback === 'function') {
+                    $('#loaderModal, #voidLoaderModal, #refundLoaderModal,#debiSaleModal,#voidDebitLoaderModal,#debitSaleMobileModalLoader,#creditSaleMobileModalLoader,#EBTSaleModal, #EBTSaleMobileLoaderModal,#EBTrefundLoaderModal').on('hidden.bs.modal', function () {
+                        callback(message); // Pass the message to the callback
+                        $(this).off('hidden.bs.modal'); // Remove the event listener after execution
+                        $('.square-btn').removeClass('clicked'); // Reset button styles
+                    });
+                }
+            }
+
+
+            // Cancel button click to reset input field
+            $('.cancel-button').on('click', function () {
+                $('#autoFocusInput').val('');  // Reset input value
+            });
+
+            // Set focus to the input field on page load
+            $('#autoFocusInput').focus();
+
+            // Add a class to style buttons when clicked
+            $('.square-btn').on('mousedown', function () {
+                $(this).addClass('clicked');
+            }).on('mouseup mouseleave', function () {
+                $(this).removeClass('clicked');
+            });
+
+            // Numeric keypad functionality
+            const input = document.getElementById('autoFocusInput');
+            const numericKeys = document.querySelectorAll('.numeric-key');
+
+            numericKeys.forEach(key => {
+                key.addEventListener('click', function () {
+                    const value = this.innerText;
+
+                    if (value === 'C') {
+                        // Clear the input field
+                        input.value = '';
+                    } else if (value === '←') {
+                        // Remove the last character from the input field
+                        input.value = input.value.slice(0, -1);
+                    } else {
+                        // Append the clicked value to the input field
+                        input.value += value;
+                    }
+                });
+            });
+
+  
+            $('.square-btn[data-target="#loaderModal"]').on('click', function (event) {
+            event.preventDefault();
+            const amount = $('#autoFocusInput').val();  
+            console.log("Entered Amount:", amount);
+
+            const epi = getEpiFromUrl();
+            let formData = $(this).serialize();
+            openLoaderModal();
+                        const postData = {
+                            "MessageHeader": {
+                                "MessageClass": "SERVICE",
+                                "MessageCategory": "PAYMENT",
+                                "MessageType": "REQUEST",
+                                "ServiceID": "VERIFONE",
+                                "SaleID": "VERIFONE",
+                                "POIID": "807-766-588"
+                            },
+                            "PaymentRequest": {
+                                "SaleData": {
+                                    "OperatorID": "VERIFONE",
+                                    "SaleTransactionID": {
+                                        "TransactionID": "VERIFONE",
+                                        "TimeStamp": new Date().toISOString()  
+                                    }
+                                },
+                                "PaymentTransaction": {
+                                    "AmountsReq": {
+                                        "Currency": "USD",
+                                        "RequestedAmount": amount  
+                                    }
+                                },
+                                "PaymentData": {
+                                    "PaymentType": "NORMAL",
+                                    "SplitPaymentFlag": ""
+                                }
+                            }
+                        };
+
+    
+                        fetch('http://localhost:8000/payment/poscloud/nexo/payment', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(postData),
+                        })
+                        .then(response => response.json())  
+                        .then(result => {
+                            console.log(result)
+                            const paymentResponse = result.PaymentResponse;
+                            if (paymentResponse && paymentResponse.Response.Result === 'SUCCESS') {
+                                const successMessage = 'Transaction completed successfully';
+                                closeLoaderModal(function (message) {
+                                    console.log('Success message:', message);
+                                    $('#successModal').modal('show');
+                                }, successMessage);
+                            } else if (paymentResponse && paymentResponse.Response.Result === 'FAILURE') {
+                                const errorCondition = paymentResponse.Response.ErrorCondition;
+                                const additionalResponse = paymentResponse.Response.AdditionalResponse;
+                                const errorMessage = `Error: ${errorCondition} - ${additionalResponse}`;
+                                closeLoaderModal(function () {
+                                    console.log('Transaction failed: ' + errorCondition + ' - ' + additionalResponse);
+                                    $('#errorMessage').text(errorMessage);
+                                    $('#errorModal').modal('show');
+                                }, errorMessage);
+                            } else {
+                                const unknownStatusMessage = 'Unknown transaction status received';
+                                closeLoaderModal(function (message) {
+                                    console.log('Unknown status message:', message);
+                                    $('#unknownStatusModal').modal('show');
+                                }, unknownStatusMessage);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            closeLoaderModal(function () {
+                                const errorMessage = 'Error occurred during transaction';
+                                $('#errorMessage').text(errorMessage);
+                                $('#errorModal').modal('show');
+                            }, 'Transaction Error');
+                        });
+                    });
+
+
+
+                
+                    // error: function () {
+                    //     closeLoaderModal(function () {
+                    //         $('#errorModal').modal('show'); // Handle AJAX error
+                    //     });
+                    // }
+          
+            // Handle form submission for Credit Void
+            $('#creditvoidForm').on('submit', function (e) {
+                e.preventDefault();
+                $('.saleButton1').removeClass('selected');
+                $(document.activeElement).addClass('selected');
+                const last4Digits = $('#creditVoidAmount').val(); 
+
+                if (!last4Digits) {
+                    alert('Please enter the last 4 digits of the card or Transaction Number.');
+                    return;
+                }
+                $('#creditVoidModal').modal('hide');
+                openVoidLoaderModal(e);
+                const requestBody = {
+                            "MessageHeader": {
+                                "MessageClass": "SERVICE",
+                                "MessageCategory": "REVERSAL",
+                                "MessageType": "REQUEST",
+                                "ServiceID": "VERIFONE",
+                                "SaleID": "VERIFONE",
+                                "POIID": "807-766-588"
+                            },
+                            "ReversalRequest": {
+                                "SaleData": {
+                                    "SaleTransactionID": {
+                                        "TransactionID": "VERIFONE",
+                                        "TimeStamp": new Date().toISOString()
+                                    },
+                                    "CustomerOrderReq": [
+                                        "BOTH"
+                                    ],
+                                    "SaleToPOIData": JSON.stringify({
+                                        "c": last4Digits, 
+                                        "m": "MC",
+                                        "p": "DEBIT",
+                                        "i": "2222224",
+                                        "r": "CAPTURED",
+                                        "rc": "4",
+                                        "ts": "SUCCESS"
+                                    })
+                                },
+                                "OriginalPOITransaction": {
+                                    "SaleID": "VERIFONE",
+                                    "POIID": "807-766-588",
+                                    "POITransactionID": {
+                                        "TransactionID": last4Digits, 
+                                        "TimeStamp": new Date().toISOString()
+                                    }
+                                },
+                                "ReversalReason": "CUSTCANCEL",
+                                "CustomerOrder": {
+                                    "CustomerOrderID": "VERIFONE",
+                                    "StartDate": new Date().toISOString(),
+                                    "ForecastedAmount": 1.00,
+                                    "OpenOrderState": true,
+                                    "Currency": "USD"
+                                }
+                            }
+
+                };
+
+                console.log("Request Payload:", requestBody);
+
+                $.ajax({
+                    url: 'http://localhost:8000/payment/reversal',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(requestBody), 
+                    success: function (response) {
+                        if (response.MessageHeader && response.MessageHeader.MessageType === 'RESPONSE' && response.ReversalResponse) {
+                            const result = response.ReversalResponse.Response.Result;
+                            console.log(result)
+                            if (result === 'SUCCESS') {
+                                const additionalResponse = result;
+                                closeLoaderModal(function (message) {
+                                    console.log('Success message:', additionalResponse);
+                                    $('#successModal').modal('show');
+                                }, additionalResponse);
+                            } else if (result === 'FAILURE') {
+                                const additionalResponse = response.ReversalResponse.Response.AdditionalResponse;
+                                closeLoaderModal(function (message) {
+                                    console.log('Failure reason:', additionalResponse);
+                                    $('#errorMessage').text('Failure: ' + additionalResponse);
+                                    $('#errorModal').modal('show');
+                                });
+                            } else {
+                                const errorCondition = response.ReversalResponse.Response.ErrorCondition;
+                                closeLoaderModal(function (message) {
+                                    console.log('Error condition:', errorCondition);
+                                    $('#errorMessage').text('Error: ' + errorCondition);
+                                    $('#errorModal').modal('show');
+                                });
+                            }
+                        } else {
+                            const additionalResponse = response.ReversalResponse.Response.AdditionalResponse || 'Unexpected response format.';
+                            closeLoaderModal(function (message) {
+                                console.log('Unknown status message:', additionalResponse);
+                                $('#unknownStatusModal').modal('show');
+                            }, additionalResponse);
+                        }
+                    },
+
+
+                    error: function () {
+                        closeLoaderModal(function () {
+                            $('#errorModal').modal('show');
+                        });
+                    }
+                });
+            });
+
+            // Close the Credit Void modal when the Close button is clicked
+            $('#closeVoid').on('click', function () {
+                $('#creditVoidModal').modal('hide');
+            });
+
+            // Handle form submission for Credit Refund
+            $('#creditRefundForm').on('submit', function (e) {
+                e.preventDefault();
+                const refundDetails = $('#creditRefundAmount').val();
+
+                if (!refundDetails) {
+                    alert('Please enter an amount for the refund.');
+                    return;
+                }
+
+                $('#creditRefundModal').modal('hide');
+                openRefundLoaderModal();
+
+                const requestBody = {
+                    "MessageHeader": {
+                        "MessageClass": "SERVICE",
+                        "MessageCategory": "PAYMENT",
+                        "MessageType": "REQUEST",
+                        "ServiceID": "VERIFONE",
+                        "SaleID": "VERIFONE",
+                        "POIID": "807-766-588"
+                    },
+                    "PaymentRequest": {
+                        "SaleData": {
+                            "SaleTransactionID": {
+                                "TransactionID": "VERIFONE",
+                                "TimeStamp": new Date().toISOString()
+                            },
+                            "SaleToAcquirerData": "tender=MOTO"
+                        },
+                        "PaymentTransaction": {
+                            "AmountsReq": {
+                                "Currency": "USD",
+                                "RequestedAmount": refundDetails
+                            }
+                        },
+                        "PaymentData": {
+                            "PaymentType": "REFUND",
+                            "SplitPaymentFlag": true
+                        }
+                    }
+                };
+
+                $.ajax({
+                    url: 'http://localhost:8000/payment/poscloud/nexo/payment',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(requestBody),
+                    success: function (response) {
+                        const paymentResponse = response.PaymentResponse;
+                        console.log('Payment Response:', paymentResponse);
+                        if (paymentResponse && paymentResponse.Response.Result === 'SUCCESS') {
+                            const successMessage = 'Transaction completed successfully';
+                            closeLoaderModal(function (message) {
+                                console.log('Success message:', message);
+                                $('#successModal').modal('show');
+                            }, successMessage);
+                        } else if (paymentResponse && paymentResponse.Response.Result === 'FAILURE') {
+                            const errorCondition = paymentResponse.Response.ErrorCondition;
+                            const additionalResponse = paymentResponse.Response.AdditionalResponse;
+                            closeLoaderModal(function (message) {
+                                console.log('Error message:', additionalResponse);
+                                $('#errorMessage').text(message); // Bind the message to the <h5>
+                                $('#errorModal').modal('show');
+                            }, additionalResponse);
+                        } else {
+                            const unknownStatusMessage = 'Unknown transaction status received';
+                            closeLoaderModal(function (message) {
+                                console.log('Unknown status message:', message);
+                                $('#unknownStatusModal').modal('show');
+                            }, unknownStatusMessage);
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                        closeLoaderModal(function () {
+                            const errorMessage = 'Error occurred during transaction';
+                            $('#errorMessage').text(errorMessage);
+                            $('#errorModal').modal('show');
+                        }, 'Transaction Error');
+                    }
+                });
+            });
+
+            // Close the Credit Refund modal when the Close button is clicked
+            $('#closeRefund').on('click', function () {
+                $('#creditRefundModal').modal('hide');
+            });
+
+
+            $('.square-btn[data-target="#debiSaleModal"]').on('click', function (event) {
+                event.preventDefault();
+                const amount = $('#autoFocusInput').val();
+                console.log("Entered Amount:", amount);
+
+                const epi = getEpiFromUrl();
+                openDebitSaleLoaderModal();
+
+                const postData = {
+                    "MessageHeader": {
+                        "MessageClass": "SERVICE",
+                        "MessageCategory": "PAYMENT",
+                        "MessageType": "REQUEST",
+                        "ServiceID": "VERIFONE",
+                        "SaleID": "VERIFONE",
+                        "POIID": "807-766-588"
+                    },
+                    "PaymentRequest": {
+                        "SaleData": {
+                            "SaleTransactionID": {
+                                "TransactionID": "VERIFONE",
+                                "TimeStamp": new Date().toISOString()
+                            }
+                        },
+                        "PaymentTransaction": {
+                            "AmountsReq": {
+                                "Currency": "USD",
+                                "RequestedAmount": amount
+                            }
+                        },
+                        "PaymentData": {
+                            "PaymentType": "NORMAL",
+                            "SplitPaymentFlag": ""
+                        }
+                    }
+                };
+
+                $.ajax({
+                    url: 'http://localhost:8000/payment/poscloud/nexo/payment',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(postData),
+                    success: function (response) {
+                        const paymentResponse = response.PaymentResponse;
+                        if (paymentResponse && paymentResponse.Response.Result === 'SUCCESS') {
+                            const successMessage = `Transaction completed successfully. Authorized Amount: ${paymentResponse.PaymentResult.AmountsResp.AuthorizedAmount}`;
+                            closeLoaderModal(function (message) {
+                                console.log('Success message:', message);
+                                $('#successModal').modal('show');
+                            }, successMessage);
+                        } else if (paymentResponse && paymentResponse.Response.Result === 'FAILURE') {
+                            const errorCondition = paymentResponse.Response.ErrorCondition;
+                            const additionalResponse = paymentResponse.Response.AdditionalResponse;
+                            const errorMessage = `Error: ${errorCondition} - ${additionalResponse}`;
+                            closeLoaderModal(function () {
+                                console.log('Transaction failed: ' + errorCondition + ' - ' + additionalResponse);
+                                $('#errorMessage').text(errorMessage);
+                                $('#errorModal').modal('show');
+                            }, errorMessage);
+                        } else {
+                            const unknownStatusMessage = 'Unknown transaction status received';
+                            closeLoaderModal(function (message) {
+                                console.log('Unknown status message:', message);
+                                $('#unknownStatusModal').modal('show');
+                            }, unknownStatusMessage);
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                        closeLoaderModal(function () {
+                            const errorMessage = 'Error occurred during transaction';
+                            $('#errorMessage').text(errorMessage);
+                            $('#errorModal').modal('show');
+                        }, 'Transaction Error');
+                    }
+
+
+                    // error: function () {
+                    //     closeLoaderModal(function () {
+                    //         $('#errorModal').modal('show'); // Show error modal on AJAX error
+                    //     });
+                    // }
+                });
+            });
+
+            $('#debitVoidModal').on('show.bs.modal', function () {
+                // Change the button color when the modal opens
+                $('.square-btn').addClass('btn-active');
+            });
+
+
+            $('#debitVoidModal').on('hide.bs.modal', function () {
+                // Revert the button color when the modal closes
+                $('.square-btn').removeClass('btn-active');
+            });
+
+            $('#debitvoidForm').on('submit', function (e) {
+                        e.preventDefault();
+                        const last4Digits = $('#debitVoidAmount').val();
+
+                        if (!last4Digits) {
+                            alert('Please enter the last 4 digits of the card or Transaction Number.');
+                            return;
+                        }
+                        $('#debitVoidModal').modal('hide');
+                        openDebitVoidLoaderModal();
+
+                        const requestBody = {
+                            "MessageHeader": {
+                                "MessageClass": "SERVICE",
+                                "MessageCategory": "REVERSAL",
+                                "MessageType": "REQUEST",
+                                "ServiceID": "VERIFONE",
+                                "SaleID": "VERIFONE",
+                                "POIID": "807-766-588"
+                            },
+                            "ReversalRequest": {
+                                "SaleData": {
+                                    "SaleTransactionID": {
+                                        "TransactionID": "VERIFONE",
+                                        "TimeStamp": new Date().toISOString()
+                                    },
+                                    "CustomerOrderReq": [
+                                        "BOTH"
+                                    ],
+                                    "SaleToPOIData": JSON.stringify({
+                                        "c": last4Digits, 
+                                        "m": "MC",
+                                        "p": "DEBIT",
+                                        "i": "2222224",
+                                        "r": "CAPTURED",
+                                        "rc": "4",
+                                        "ts": "SUCCESS"
+                                    })
+                                },
+                                "OriginalPOITransaction": {
+                                    "SaleID": "VERIFONE",
+                                    "POIID": "807-766-588",
+                                    "POITransactionID": {
+                                        "TransactionID": last4Digits, 
+                                        "TimeStamp": new Date().toISOString()
+                                    }
+                                },
+                                "ReversalReason": "CUSTCANCEL",
+                                "CustomerOrder": {
+                                    "CustomerOrderID": "VERIFONE",
+                                    "StartDate": new Date().toISOString(),
+                                    "ForecastedAmount": 1.00,
+                                    "OpenOrderState": true,
+                                    "Currency": "USD"
+                                }
+                            }
+                        };
+
+                        $.ajax({
+                            url: 'http://localhost:8000/payment/reversal',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(requestBody),
+                            success: function (response) {
+                                console.log('responseresponseresponseresponseresponse',response)
+                                if (response.MessageHeader && response.MessageHeader.MessageType === 'RESPONSE' && response.ReversalResponse) {
+                                    const result = response.ReversalResponse.Response.Result;
+
+                                    if (result === 'SUCCESS') {
+                                        const successMessage = 'Reversal successful: ' + response.ReversalResponse.Response.Result;
+                                        closeLoaderModal(function (message) {
+                                            console.log('Success message:', message);
+                                            $('#successModal').modal('show');
+                                        }, successMessage);
+                                    } else {
+                                        const errorCondition = response.ReversalResponse.Response.ErrorCondition;
+                                        closeLoaderModal(function (message) {
+                                            console.log('Error condition:', errorCondition);
+                                            $('#errorMessage').text('Error: ' + errorCondition);
+                                            $('#errorModal').modal('show');
+                                        });
+                                    }
+                                } else {
+                                    const unknownStatusMessage = 'Unexpected response format.';
+                                    closeLoaderModal(function (message) {
+                                        console.log('Unknown status message:', message);
+                                        $('#unknownStatusModal').modal('show');
+                                    }, unknownStatusMessage);
+                                }
+                            },
+                            error: function () {
+                                closeLoaderModal(function () {
+                                    $('#errorModal').modal('show'); 
+                                });
+                            }
+                        });
+                        
+
+                       
+
+
+                    // error: function () {
+                    //     closeLoaderModal(function () {
+                    //         $('#errorModal').modal('show'); // Handle AJAX error
+                    //     });
+                    // }
+         
+            });
+
+            // Close the Debit Void modal when the Close button is clicked
+            $('#closeVoid').on('click', function () {
+                $('#debitVoidModal').modal('hide');
+            });
+
+
+            $('#creditSaleMobileForm').on('submit', function (e) {
+                e.preventDefault();
+                const voidDetails = $('#creditSaleMobileAmount').val();
+                console.log("$$$", voidDetails);
+
+                if (!voidDetails) {
+                    alert('Please enter an amount for the void.');
+                    return;
+                }
+                $('#creditSaleMobileModal').modal('hide');
+                openCreditSaleMobileLoaderModal();
+                const epi = getEpiFromUrl();
+                let formData = $(this).serialize();
+                formData += '&epi=' + epi;
+                formData += '&TRAN_MODE=1';
+                formData += '&TRAN_CODE=1';
+                console.log($(this).serialize());
+                $.ajax({
+                    url: '/payment/send_payment',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            const successMessage = response.message;
+                            closeLoaderModal(function (message) {
+                                console.log('Success message:', message);
+                                $('#successModal').modal('show');
+                            }, successMessage);
+                        } else if (response.status === 'error') {
+                            const errorMessage = response.message; // Get the error message from response
+                            closeLoaderModal(function (message) {
+                                console.log('Error message:', message);
+                                // Set the error message to the <h5> element inside the errorModal
+                                $('#errorMessage').text(message); // Bind the message to the <h5>
+                                // Show the error modal
+                                $('#errorModal').modal('show');
+                            }, errorMessage);
+                        } else {
+                            const unknownStatusMessage = response.message;
+                            closeLoaderModal(function (message) {
+                                console.log('Unknown status message:', message);
+                                $('#unknownStatusModal').modal('show');
+                            }, unknownStatusMessage);
+                        }
+                    },
+                    // error: function () {
+                    //     closeLoaderModal(function () {
+                    //         $('#errorModal').modal('show'); // Handle AJAX error
+                    //     });
+                    // }
+                });
+            });
+            // Close the Debit Void modal when the Close button is clicked
+            $('#closeVoid').on('click', function () {
+                $('#debitVoidModal').modal('hide');
+            });
+
+
+            $('#debitSaleMobileForm').on('submit', function (e) {
+                e.preventDefault();
+                const voidDetails = $('#debitSaleMobileAmount').val();
+                console.log("$$$", voidDetails);
+
+                if (!voidDetails) {
+                    alert('Please enter an amount for the void.');
+                    return;
+                }
+                $('#debitSaleMobileModal').modal('hide');
+                opendebitSaleMobileLoaderModal();
+                const epi = getEpiFromUrl();
+                let formData = $(this).serialize();
+                formData += '&epi=' + epi;
+                formData += '&TRAN_MODE=2';
+                formData += '&TRAN_CODE=1';
+                console.log($(this).serialize());
+                $.ajax({
+                    url: '/payment/send_payment',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            const successMessage = response.message;
+                            closeLoaderModal(function (message) {
+                                console.log('Success message:', message);
+                                $('#successModal').modal('show');
+                            }, successMessage);
+                        } else if (response.status === 'error') {
+                            const errorMessage = response.message; // Get the error message from response
+                            closeLoaderModal(function (message) {
+                                console.log('Error message:', message);
+                                // Set the error message to the <h5> element inside the errorModal
+                                $('#errorMessage').text(message); // Bind the message to the <h5>
+                                // Show the error modal
+                                $('#errorModal').modal('show');
+                            }, errorMessage);
+                        } else {
+                            const unknownStatusMessage = response.message;
+                            closeLoaderModal(function (message) {
+                                console.log('Unknown status message:', message);
+                                $('#unknownStatusModal').modal('show');
+                            }, unknownStatusMessage);
+                        }
+                    },
+                    // error: function () {
+                    //     closeLoaderModal(function () {
+                    //         $('#errorModal').modal('show'); // Handle AJAX error
+                    //     });
+                    // }
+                });
+            });
+            // Close the Debit Void modal when the Close button is clicked
+            $('#closeVoid').on('click', function () {
+                $('#debitVoidModal').modal('hide');
+            });
+
+
+            $('.square-btn[data-target="#EBTSaleModal"]').on('click', function (event) {
+                event.preventDefault();
+                const amount = $('#autoFocusInput').val();  
+                console.log("Entered Amount:", amount);
+                const epi = getEpiFromUrl();
+                openLoaderModal();
+
+                const postData = {
+                    "MessageHeader": {
+                        "MessageClass": "SERVICE",
+                        "MessageCategory": "PAYMENT",
+                        "MessageType": "REQUEST",
+                        "ServiceID": "VERIFONE",
+                        "SaleID": "VERIFONE",
+                        "POIID": "807-766-588"
+                    },
+                    "PaymentRequest": {
+                        "SaleData": {
+                            "OperatorID": "VERIFONE",
+                            "SaleTransactionID": {
+                                "TransactionID": "VERIFONE",
+                                "TimeStamp": new Date().toISOString()  
+                            }
+                        },
+                        "PaymentTransaction": {
+                            "AmountsReq": {
+                                "Currency": "USD",
+                                "RequestedAmount": amount 
+                            },
+                            "TransactionConditions": {
+                                "VF_RequestedPaymentType": "EBT" 
+                            }
+                        },
+                        "PaymentData": {
+                            "PaymentType": "NORMAL",
+                            "SplitPaymentFlag": ""  
+                        }
+                    }
+                };
+                fetch('http://localhost:8000/payment/poscloud/nexo/payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(postData),
+                })
+                .then(response => response.json())  
+                .then(result => {
+                    console.log(result)
+                    const paymentResponse = result.PaymentResponse;
+                    if (paymentResponse && paymentResponse.Response.Result === 'SUCCESS') {
+                        const successMessage = 'Transaction completed successfully';
+                        closeLoaderModal(function (message) {
+                            console.log('Success message:', message);
+                            $('#successModal').modal('show'); 
+                        }, successMessage);
+                    } else if (paymentResponse && paymentResponse.Response.Result === 'FAILURE') {
+                        const errorCondition = paymentResponse.Response.ErrorCondition;
+                        const additionalResponse = paymentResponse.Response.AdditionalResponse;
+                        const errorMessage = `Error: ${errorCondition} - ${additionalResponse}`;
+                        closeLoaderModal(function () {
+                            console.log('Transaction failed: ' + errorCondition + ' - ' + additionalResponse);
+                            $('#errorMessage').text(errorMessage); 
+                            $('#errorModal').modal('show');  
+                        }, errorMessage);
+                    } else {
+                        const unknownStatusMessage = 'Unknown transaction status received';
+                        closeLoaderModal(function (message) {
+                            console.log('Unknown status message:', message);
+                            $('#unknownStatusModal').modal('show'); 
+                        }, unknownStatusMessage);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    closeLoaderModal(function () {
+                        const errorMessage = 'Error occurred during transaction';
+                        $('#errorMessage').text(errorMessage); 
+                        $('#errorModal').modal('show'); 
+                    }, 'Transaction Error');
+                });
+            });
+
+
+            $('#EBTSaleMobileForm').on('submit', function (e) {
+                e.preventDefault();
+                const voidDetails = $('#EBtSaleMobileAmount').val();
+                console.log("$$$", voidDetails);
+
+                if (!voidDetails) {
+                    alert('Please enter an amount for the void.');
+                    return;
+                }
+                $('#EBTSaleMobileModal').modal('hide');
+                openEBTSaleMobileLoaderModal();
+                const epi = getEpiFromUrl();
+                let formData = $(this).serialize();
+                formData += '&epi=' + epi;
+                formData += '&TRAN_MODE=3';
+                formData += '&TRAN_CODE=1';
+                console.log($(this).serialize());
+                $.ajax({
+                    url: '/payment/send_payment',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        if (response.status === 'success') {
+                            const successMessage = response.message;
+                            closeLoaderModal(function (message) {
+                                console.log('Success message:', message);
+                                $('#successModal').modal('show');
+                            }, successMessage);
+                        } else if (response.status === 'error') {
+                            const errorMessage = response.message; // Get the error message from response
+                            closeLoaderModal(function (message) {
+                                console.log('Error message:', message);
+                                // Set the error message to the <h5> element inside the errorModal
+                                $('#errorMessage').text(message); // Bind the message to the <h5>
+                                // Show the error modal
+                                $('#errorModal').modal('show');
+                            }, errorMessage);
+                        } else {
+                            const unknownStatusMessage = response.message;
+                            closeLoaderModal(function (message) {
+                                console.log('Unknown status message:', message);
+                                $('#unknownStatusModal').modal('show');
+                            }, unknownStatusMessage);
+                        }
+                    },
+                    // error: function () {
+                    //     closeLoaderModal(function () {
+                    //         $('#errorModal').modal('show'); // Handle AJAX error
+                    //     });
+                    // }
+                });
+            });
+            // Close the Debit Void modal when the Close button is clicked
+            $('#closeVoid').on('click', function () {
+                $('#debitVoidModal').modal('hide');
+            });
+
+
+
+            $('.square-btn[data-target="#EBTRefundModal"]').on('click', function (event) {
+                        event.preventDefault();
+                        const amount = $('#EBTRefundAmount').val();  
+                        console.log("Entered Refund Amount:", amount);
+                        const epi = getEpiFromUrl();
+                        openLoaderModal();
+                        const postData = {
+                            "MessageHeader": {
+                                "MessageClass": "SERVICE",
+                                "MessageCategory": "PAYMENT",
+                                "MessageType": "REQUEST",
+                                "ServiceID": "VERIFONE",
+                                "SaleID": "VERIFONE",
+                                "POIID": "807-766-588"
+                            },
+                            "PaymentRequest": {
+                                "SaleData": {
+                                    "OperatorID": "VERIFONE",
+                                    "SaleTransactionID": {
+                                        "TransactionID": "VERIFONE",
+                                        "TimeStamp": new Date().toISOString()  
+                                    }
+                                },
+                                "PaymentTransaction": {
+                                    "AmountsReq": {
+                                        "Currency": "USD",
+                                        "RequestedAmount": amount  
+                                    },
+                                    "TransactionConditions": {
+                                        "VF_RequestedPaymentType": "EBT"  
+                                    }
+                                },
+                                "PaymentData": {
+                                    "PaymentType": "REFUND",
+                                    "SplitPaymentFlag": ""  
+                                }
+                            }
+                        };
+
+                        fetch('http://localhost:8000/payment/poscloud/nexo/payment', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(postData),
+                        })
+                        .then(response => response.json())  
+                        .then(result => {
+                            const paymentResponse = result.PaymentResponse;
+                            console.log(result)
+                            if (paymentResponse && paymentResponse.Response.Result === 'SUCCESS') {
+                                const successMessage = 'Refund completed successfully';
+                                closeLoaderModal(function (message) {
+                                    console.log('Success message:', message);
+                                    $('#successModal').modal('show');  
+                                }, successMessage);
+
+                            } else if (paymentResponse && paymentResponse.Response.Result === 'FAILURE') {
+                                const errorCondition = paymentResponse.Response.ErrorCondition;
+                                const additionalResponse = paymentResponse.Response.AdditionalResponse;
+                                const errorMessage = `Error: ${errorCondition} - ${additionalResponse}`;
+                                closeLoaderModal(function () {
+                                    console.log('Refund failed: ' + errorCondition + ' - ' + additionalResponse);
+                                    $('#errorMessage').text(errorMessage);  
+                                    $('#errorModal').modal('show');  
+                                }, errorMessage);
+
+                            } else {
+                                const unknownStatusMessage = 'Unknown refund status received';
+                                closeLoaderModal(function (message) {
+                                    console.log('Unknown status message:', message);
+                                    $('#unknownStatusModal').modal('show'); 
+                                }, unknownStatusMessage);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            closeLoaderModal(function () {
+                                const errorMessage = 'Error occurred during refund transaction';
+                                $('#errorMessage').text(errorMessage);  
+                                $('#errorModal').modal('show');  
+                            }, 'Transaction Error');
+
+
+                    // error: function () {
+                    //     closeLoaderModal(function () {
+                    //         $('#errorModal').modal('show'); // Handle AJAX error
+                    //     });
+                    // }
+                });
+            });
+
+        });
+    </script>
+</body>
+
+</html>
