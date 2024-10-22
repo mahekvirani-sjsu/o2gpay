@@ -442,7 +442,8 @@
                                     </div>
 
                                     <div class="col-4 col-md-3">
-                                        <button class="square-btn mobile-btn saleButton1">
+                                        <button class="square-btn mobile-btn saleButton1" id="foodBalance">
+                                            <!-- <button class="square-btn mobile-btn saleButton1"> -->
                                             <span class="square-btn-content">Food Balance</span>
                                         </button>
                                     </div>
@@ -681,6 +682,21 @@
             </div>
         </div>
     </div>
+    <!-- Loader Modal for Balance Inquiry -->
+    <div class="modal fade" id="EBTBalanceInquiryLoaderModal" tabindex="-1" role="dialog"
+        aria-labelledby="EBTBalanceInquiryLoaderModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div id="displayEBTBalanceInquiryDetails">
+                        <!-- Loader message will be inserted here dynamically by JavaScript -->
+                    </div>
+                    <button type="button" class="btn btn-secondary mt-4" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Debit Void Loader Modal -->
     <div class="modal fade" id="voidDebitLoaderModal" tabindex="-1" role="dialog" aria-labelledby="loaderModalLabel"
         aria-hidden="true">
@@ -837,6 +853,13 @@
 
             $('#EBTSaleModal').modal('show');
         }
+        function openEBTBalanceInquiryLoaderModal() {
+            // Insert the message into the loader modal
+            $('#displayEBTBalanceInquiryDetails').html('<span style="color: green; font-size:20px; font-weight:bold">Processing Balance Inquiry...</span>');
+
+            // Show the loader modal
+            $('#EBTBalanceInquiryLoaderModal').modal('show');
+        }
         function openVoidModal() {
             $('.saleButton1').removeClass('selected');
             $(document.activeElement).addClass('selected');
@@ -925,32 +948,18 @@
                 $('#EBTSaleMobileLoaderModal').modal('show');
             }
 
-            // Close loader modal and run callback after modal is hidden
-            // function closeLoaderModal(callback, message) {
-            //     console.log("Closing loader modal with message:", message);
-            //     const errorMessage = message;
-            //     console.log("ErrorMessage", errorMessage)
-            //     $('#loaderModal, #voidLoaderModal, #refundLoaderModal,#debiSaleModal,#voidDebitLoaderModal,#debitSaleMobileModalLoader,#creditSaleMobileModalLoader,#EBTSaleModal, #EBTSaleMobileLoaderModal,#EBTrefundLoaderModal').modal('hide');
-            //     if (callback && typeof callback === 'function') {
-            //         $('#loaderModal, #voidLoaderModal, #refundLoaderModal,#debiSaleModal,#voidDebitLoaderModal,#debitSaleMobileModalLoader,#creditSaleMobileModalLoader,#EBTSaleModal, #EBTSaleMobileLoaderModal,#EBTrefundLoaderModal').on('hidden.bs.modal', function () {
-            //             callback(message); // Pass the message to the callback
-            //             $(this).off('hidden.bs.modal'); // Remove the event listener after execution
-            //             $('.square-btn').removeClass('clicked'); // Reset button styles
-            //         });
-            //     }
-            // }
-             function closeLoaderModal(callback, message) {
+            function closeLoaderModal(callback, message) {
                 console.log("Closing loader modal with message:", message);
                 const errorMessage = message;
                 console.log("ErrorMessage", errorMessage);
 
                 // Hide only the loader modal directly
-                $('#loaderModal, #voidLoaderModal, #refundLoaderModal,#debiSaleModal,#voidDebitLoaderModal,#debitSaleMobileModalLoader,#creditSaleMobileModalLoader,#EBTSaleModal, #EBTSaleMobileLoaderModal,#EBTrefundLoaderModal').modal('hide');; 
+                $('#loaderModal, #voidLoaderModal, #refundLoaderModal,#debiSaleModal,#voidDebitLoaderModal,#debitSaleMobileModalLoader,#creditSaleMobileModalLoader,#EBTSaleModal, #EBTSaleMobileLoaderModal,#EBTrefundLoaderModal').modal('hide');;
 
                 // Ensure callback is triggered after modal is hidden
                 if (callback && typeof callback === 'function') {
                     // Use a timeout to ensure the modal has had time to fully hide
-                    setTimeout(function() {
+                    setTimeout(function () {
                         callback(message);  // Pass the message to the callback
                         $('.square-btn').removeClass('clicked'); // Reset button styles
                     }, 500);  // 500ms delay should give the modal enough time to hide
@@ -995,12 +1004,12 @@
                 });
             });
 
-  
+
             $('.square-btn[data-target="#loaderModal"]').on('click', function (event) {
                 event.preventDefault();
-                const amount = $('#autoFocusInput').val();  
+                const amount = $('#autoFocusInput').val();
                 console.log("Entered Amount:", amount);
-                
+
                 if (!amount) {
                     alert('Please enter an amount for the void.');
                     return false;
@@ -1008,242 +1017,27 @@
 
                 openLoaderModal();
 
-                // Sending only the amount to the backend
+
                 const postData = { "amount": amount };
 
-                // Call the Python backend using the updated API endpoint
-                fetch('http://localhost:8000/payment/poscloud/nexo/payment', {  // Flask backend URL
+
+                fetch('http://localhost:8000/payment/poscloud/nexo/payment', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(postData),
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(result => {
-                    console.log(result);
-                    const paymentResponse = result.PaymentResponse;
-
-                    // Handle the response result
-                    if (paymentResponse && paymentResponse.Response.Result === 'SUCCESS') {
-                        const successMessage = 'Transaction completed successfully';
-                        closeLoaderModal(function (message) {
-                            console.log('Success message:', message);
-                            $('#successModal').modal('show');
-                        }, successMessage);
-                    } else if (paymentResponse && paymentResponse.Response.Result === 'FAILURE') {
-                        const errorCondition = paymentResponse.Response.ErrorCondition;
-                        const additionalResponse = paymentResponse.Response.AdditionalResponse;
-                        const errorMessage = `Error: ${errorCondition} - ${additionalResponse}`;
-
-                        // Log and handle the failure case
-                        console.log('Transaction failed: ' + errorCondition + ' - ' + additionalResponse);
-                        closeLoaderModal(function () {
-                            $('#errorMessage').text(errorMessage);
-                            $('#errorModal').modal('show');
-                        }, errorMessage);
-                    } else {
-                        const unknownStatusMessage = 'Unknown transaction status received';
-                        closeLoaderModal(function (message) {
-                            console.log('Unknown status message:', message);
-                            $('#unknownStatusModal').modal('show');
-                        }, unknownStatusMessage);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    
-                    // Handle network or HTTP-level errors
-                    $('#loaderModal').modal('hide');
-                    $('#loaderModal').off('hidden.bs.modal');
-                    closeLoaderModal(function () {
-                        const errorMessage = 'Error occurred during transaction';
-                        $('#errorMessage').text(errorMessage);
-                        $('#errorModal').modal('show');
-                    }, 'Transaction Error');
-                });
-            });
-
-
-                
-                    // error: function () {
-                    //     closeLoaderModal(function () {
-                    //         $('#errorModal').modal('show'); // Handle AJAX error
-                    //     });
-                    // }
-          
-            // Handle form submission for Credit Void
-            $('#creditvoidForm').on('submit', function (e) {
-                e.preventDefault();
-                $('.saleButton1').removeClass('selected');
-                $(document.activeElement).addClass('selected');
-                const last4Digits = $('#creditVoidAmount').val(); 
-
-                if (!last4Digits) {
-                    alert('Please enter the last 4 digits of the card or Transaction Number.');
-                    return;
-                }
-                $('#creditVoidModal').modal('hide');
-                openVoidLoaderModal(e);
-                const requestBody = {
-                            "MessageHeader": {
-                                "MessageClass": "SERVICE",
-                                "MessageCategory": "REVERSAL",
-                                "MessageType": "REQUEST",
-                                "ServiceID": "VERIFONE",
-                                "SaleID": "VERIFONE",
-                                "POIID": "807-766-588"
-                            },
-                            "ReversalRequest": {
-                                "SaleData": {
-                                    "SaleTransactionID": {
-                                        "TransactionID": "VERIFONE",
-                                        "TimeStamp": new Date().toISOString()
-                                    },
-                                    "CustomerOrderReq": [
-                                        "BOTH"
-                                    ],
-                                    "SaleToPOIData": JSON.stringify({
-                                        "c": last4Digits, 
-                                        "m": "MC",
-                                        "p": "DEBIT",
-                                        "i": "2222224",
-                                        "r": "CAPTURED",
-                                        "rc": "4",
-                                        "ts": "SUCCESS"
-                                    })
-                                },
-                                "OriginalPOITransaction": {
-                                    "SaleID": "VERIFONE",
-                                    "POIID": "807-766-588",
-                                    "POITransactionID": {
-                                        "TransactionID": last4Digits, 
-                                        "TimeStamp": new Date().toISOString()
-                                    }
-                                },
-                                "ReversalReason": "CUSTCANCEL",
-                                "CustomerOrder": {
-                                    "CustomerOrderID": "VERIFONE",
-                                    "StartDate": new Date().toISOString(),
-                                    "ForecastedAmount": 1.00,
-                                    "OpenOrderState": true,
-                                    "Currency": "USD"
-                                }
-                            }
-
-                };
-
-                console.log("Request Payload:", requestBody);
-
-                $.ajax({
-                    url: 'http://localhost:8000/payment/reversal',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(requestBody), 
-                    success: function (response) {
-                        if (response.MessageHeader && response.MessageHeader.MessageType === 'RESPONSE' && response.ReversalResponse) {
-                            const result = response.ReversalResponse.Response.Result;
-                            console.log(result)
-                            if (result === 'SUCCESS') {
-                                const additionalResponse = result;
-                                closeLoaderModal(function (message) {
-                                    console.log('Success message:', additionalResponse);
-                                    $('#successModal').modal('show');
-                                }, additionalResponse);
-                            } else if (result === 'FAILURE') {
-                                const additionalResponse = response.ReversalResponse.Response.AdditionalResponse;
-                                closeLoaderModal(function (message) {
-                                    console.log('Failure reason:', additionalResponse);
-                                    $('#errorMessage').text('Failure: ' + additionalResponse);
-                                    $('#errorModal').modal('show');
-                                });
-                            } else {
-                                const errorCondition = response.ReversalResponse.Response.ErrorCondition;
-                                closeLoaderModal(function (message) {
-                                    console.log('Error condition:', errorCondition);
-                                    $('#errorMessage').text('Error: ' + errorCondition);
-                                    $('#errorModal').modal('show');
-                                });
-                            }
-                        } else {
-                            const additionalResponse = response.ReversalResponse.Response.AdditionalResponse || 'Unexpected response format.';
-                            closeLoaderModal(function (message) {
-                                console.log('Unknown status message:', additionalResponse);
-                                $('#unknownStatusModal').modal('show');
-                            }, additionalResponse);
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
                         }
-                    },
+                        return response.json();
+                    })
+                    .then(result => {
+                        console.log(result);
+                        const paymentResponse = result.PaymentResponse;
 
-
-                    error: function () {
-                        closeLoaderModal(function () {
-                            $('#errorModal').modal('show');
-                        });
-                    }
-                });
-            });
-
-            // Close the Credit Void modal when the Close button is clicked
-            $('#closeVoid').on('click', function () {
-                $('#creditVoidModal').modal('hide');
-            });
-
-            // Handle form submission for Credit Refund
-            $('#creditRefundForm').on('submit', function (e) {
-                e.preventDefault();
-                const refundDetails = $('#creditRefundAmount').val();
-
-                if (!refundDetails) {
-                    alert('Please enter an amount for the refund.');
-                    return;
-                }
-
-                $('#creditRefundModal').modal('hide');
-                openRefundLoaderModal();
-
-                const requestBody = {
-                    "MessageHeader": {
-                        "MessageClass": "SERVICE",
-                        "MessageCategory": "PAYMENT",
-                        "MessageType": "REQUEST",
-                        "ServiceID": "VERIFONE",
-                        "SaleID": "VERIFONE",
-                        "POIID": "807-766-588"
-                    },
-                    "PaymentRequest": {
-                        "SaleData": {
-                            "SaleTransactionID": {
-                                "TransactionID": "VERIFONE",
-                                "TimeStamp": new Date().toISOString()
-                            },
-                            "SaleToAcquirerData": "tender=MOTO"
-                        },
-                        "PaymentTransaction": {
-                            "AmountsReq": {
-                                "Currency": "USD",
-                                "RequestedAmount": refundDetails
-                            }
-                        },
-                        "PaymentData": {
-                            "PaymentType": "REFUND",
-                            "SplitPaymentFlag": true
-                        }
-                    }
-                };
-
-                $.ajax({
-                    url: 'http://localhost:8000/payment/poscloud/nexo/payment',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(requestBody),
-                    success: function (response) {
-                        const paymentResponse = response.PaymentResponse;
-                        console.log('Payment Response:', paymentResponse);
                         if (paymentResponse && paymentResponse.Response.Result === 'SUCCESS') {
                             const successMessage = 'Transaction completed successfully';
                             closeLoaderModal(function (message) {
@@ -1253,11 +1047,14 @@
                         } else if (paymentResponse && paymentResponse.Response.Result === 'FAILURE') {
                             const errorCondition = paymentResponse.Response.ErrorCondition;
                             const additionalResponse = paymentResponse.Response.AdditionalResponse;
-                            closeLoaderModal(function (message) {
-                                console.log('Error message:', additionalResponse);
-                                $('#errorMessage').text(message); // Bind the message to the <h5>
+                            const errorMessage = `Error: ${errorCondition} - ${additionalResponse}`;
+
+
+                            console.log('Transaction failed: ' + errorCondition + ' - ' + additionalResponse);
+                            closeLoaderModal(function () {
+                                $('#errorMessage').text(errorMessage);
                                 $('#errorModal').modal('show');
-                            }, additionalResponse);
+                            }, errorMessage);
                         } else {
                             const unknownStatusMessage = 'Unknown transaction status received';
                             closeLoaderModal(function (message) {
@@ -1265,16 +1062,171 @@
                                 $('#unknownStatusModal').modal('show');
                             }, unknownStatusMessage);
                         }
-                    },
-                    error: function (error) {
+                    })
+                    .catch(error => {
                         console.error('Error:', error);
+
+
+                        $('#loaderModal').modal('hide');
+                        $('#loaderModal').off('hidden.bs.modal');
                         closeLoaderModal(function () {
                             const errorMessage = 'Error occurred during transaction';
                             $('#errorMessage').text(errorMessage);
                             $('#errorModal').modal('show');
                         }, 'Transaction Error');
-                    }
-                });
+                    });
+            });
+
+
+
+            // error: function () {
+            //     closeLoaderModal(function () {
+            //         $('#errorModal').modal('show'); // Handle AJAX error
+            //     });
+            // }
+
+            // Handle form submission for Credit Void
+            $('#creditvoidForm').on('submit', function (e) {
+                e.preventDefault();
+
+
+                $('.saleButton1').removeClass('selected');
+                $(document.activeElement).addClass('selected');
+
+
+                const last4Digits = $('#creditVoidAmount').val();
+
+
+                if (!last4Digits) {
+                    alert('Please enter the last 4 digits of the card or Transaction Number.');
+                    return;
+                }
+
+                $('#creditVoidModal').modal('hide');
+                openVoidLoaderModal(e);
+
+
+                const postData = {
+                    "last4Digits": last4Digits
+                };
+
+                fetch('http://localhost:8000/payment/reversal', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(postData),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        console.log(result);
+
+                        if (result.MessageHeader && result.MessageHeader.MessageType === 'RESPONSE' && result.ReversalResponse) {
+                            const reversalResult = result.ReversalResponse.Response.Result;
+
+                            if (reversalResult === 'SUCCESS') {
+                                closeLoaderModal(function () {
+                                    $('#successModal').modal('show');
+                                });
+                            } else if (reversalResult === 'FAILURE') {
+                                const additionalResponse = result.ReversalResponse.Response.AdditionalResponse;
+                                closeLoaderModal(function () {
+                                    $('#errorMessage').text('Failure: ' + additionalResponse);
+                                    $('#errorModal').modal('show');
+                                });
+                            } else {
+                                const errorCondition = result.ReversalResponse.Response.ErrorCondition;
+                                closeLoaderModal(function () {
+                                    $('#errorMessage').text('Error: ' + errorCondition);
+                                    $('#errorModal').modal('show');
+                                });
+                            }
+                        } else {
+                            const additionalResponse = result.ReversalResponse.Response.AdditionalResponse || 'Unexpected response format.';
+                            closeLoaderModal(function () {
+                                $('#unknownStatusModal').modal('show');
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        closeLoaderModal(function () {
+                            $('#errorModal').modal('show');
+                        });
+                    });
+            });
+
+
+            // Close the Credit Void modal when the Close button is clicked
+            $('#closeVoid').on('click', function () {
+                $('#creditVoidModal').modal('hide');
+            });
+
+
+            $('#creditRefundForm').on('submit', function (e) {
+                e.preventDefault();
+
+                const refundDetails = $('#creditRefundAmount').val();
+
+
+                if (!refundDetails) {
+                    alert('Please enter an amount for the refund.');
+                    return;
+                }
+
+                $('#creditRefundModal').modal('hide');
+                openRefundLoaderModal();
+
+
+                const postData = {
+                };
+                fetch('http://localhost:8000/payment/refund', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(postData),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        console.log('Result from server:', result);
+
+                        const paymentResponse = result.PaymentResponse;
+                        if (paymentResponse && paymentResponse.Response.Result === 'SUCCESS') {
+                            const successMessage = 'Transaction completed successfully';
+                            closeLoaderModal(function () {
+                                $('#successModal').modal('show');
+                            }, successMessage);
+                        } else if (paymentResponse && paymentResponse.Response.Result === 'FAILURE') {
+                            const errorCondition = paymentResponse.Response.ErrorCondition;
+                            const additionalResponse = paymentResponse.Response.AdditionalResponse;
+                            closeLoaderModal(function () {
+                                $('#errorMessage').text('Error: ' + additionalResponse);
+                                $('#errorModal').modal('show');
+                            });
+                        } else {
+                            const unknownStatusMessage = 'Unknown transaction status received';
+                            closeLoaderModal(function () {
+                                $('#unknownStatusModal').modal('show');
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        closeLoaderModal(function () {
+                            $('#errorModal').modal('show');
+                        });
+                    });
             });
 
             // Close the Credit Refund modal when the Close button is clicked
@@ -1287,49 +1239,34 @@
                 event.preventDefault();
                 const amount = $('#autoFocusInput').val();
                 console.log("Entered Amount:", amount);
+
                 if (!amount) {
-                    alert('Please enter an amount for the void.');
+                    alert('Please enter an amount for the sale.');
                     return false;
                 }
-                const epi = getEpiFromUrl();
+
+
                 openDebitSaleLoaderModal();
 
-                const postData = {
-                    "MessageHeader": {
-                        "MessageClass": "SERVICE",
-                        "MessageCategory": "PAYMENT",
-                        "MessageType": "REQUEST",
-                        "ServiceID": "VERIFONE",
-                        "SaleID": "VERIFONE",
-                        "POIID": "807-766-588"
-                    },
-                    "PaymentRequest": {
-                        "SaleData": {
-                            "SaleTransactionID": {
-                                "TransactionID": "VERIFONE",
-                                "TimeStamp": new Date().toISOString()
-                            }
-                        },
-                        "PaymentTransaction": {
-                            "AmountsReq": {
-                                "Currency": "USD",
-                                "RequestedAmount": amount
-                            }
-                        },
-                        "PaymentData": {
-                            "PaymentType": "NORMAL",
-                            "SplitPaymentFlag": ""
-                        }
-                    }
-                };
 
-                $.ajax({
-                    url: 'http://localhost:8000/payment/poscloud/nexo/payment',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(postData),
-                    success: function (response) {
-                        const paymentResponse = response.PaymentResponse;
+                const postData = { "amount": amount };
+
+                fetch('http://localhost:8000/payment/poscloud/nexo/payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(postData),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        const paymentResponse = result.PaymentResponse;
+
                         if (paymentResponse && paymentResponse.Response.Result === 'SUCCESS') {
                             const successMessage = `Transaction completed successfully. Authorized Amount: ${paymentResponse.PaymentResult.AmountsResp.AuthorizedAmount}`;
                             closeLoaderModal(function (message) {
@@ -1340,9 +1277,8 @@
                             const errorCondition = paymentResponse.Response.ErrorCondition;
                             const additionalResponse = paymentResponse.Response.AdditionalResponse;
                             const errorMessage = `Error: ${additionalResponse}`;
-                            console.log("***********************",errorMessage)
+                            console.log("Transaction failed: " + errorCondition + " - " + additionalResponse);
                             closeLoaderModal(function () {
-                                console.log('Transaction failed: ' + errorCondition + ' - ' + additionalResponse);
                                 $('#errorMessage').text(errorMessage);
                                 $('#errorModal').modal('show');
                             }, errorMessage);
@@ -1353,144 +1289,85 @@
                                 $('#unknownStatusModal').modal('show');
                             }, unknownStatusMessage);
                         }
-                    },
-                    error: function (error) {
+                    })
+                    .catch(error => {
                         console.error('Error:', error);
                         closeLoaderModal(function () {
                             const errorMessage = 'Error occurred during transaction';
                             $('#errorMessage').text(errorMessage);
                             $('#errorModal').modal('show');
                         }, 'Transaction Error');
-                    }
-
-
-                    // error: function () {
-                    //     closeLoaderModal(function () {
-                    //         $('#errorModal').modal('show'); // Show error modal on AJAX error
-                    //     });
-                    // }
-                });
+                    });
             });
 
+
+
             $('#debitVoidModal').on('show.bs.modal', function () {
-                // Change the button color when the modal opens
                 $('.square-btn').addClass('btn-active');
             });
 
-
-            $('#debitVoidModal').on('hide.bs.modal', function () {
-                // Revert the button color when the modal closes
-                $('.square-btn').removeClass('btn-active');
-            });
-
             $('#debitvoidForm').on('submit', function (e) {
-                        e.preventDefault();
-                        const last4Digits = $('#debitVoidAmount').val();
+                e.preventDefault();
+                const last4Digits = $('#debitVoidAmount').val();
 
-                        if (!last4Digits) {
-                            alert('Please enter the last 4 digits of the card or Transaction Number.');
-                            return;
+                if (!last4Digits) {
+                    alert('Please enter the last 4 digits of the card or Transaction Number.');
+                    return;
+                }
+                $('#debitVoidModal').modal('hide');
+                openDebitVoidLoaderModal();
+
+
+                const postData = {
+                    "last4Digits": last4Digits
+                };
+
+                fetch('http://localhost:8000/payment/reversal', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(postData),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
                         }
-                        $('#debitVoidModal').modal('hide');
-                        openDebitVoidLoaderModal();
+                        return response.json();
+                    })
+                    .then(result => {
+                        console.log('Result from server:', result);
 
-                        const requestBody = {
-                            "MessageHeader": {
-                                "MessageClass": "SERVICE",
-                                "MessageCategory": "REVERSAL",
-                                "MessageType": "REQUEST",
-                                "ServiceID": "VERIFONE",
-                                "SaleID": "VERIFONE",
-                                "POIID": "807-766-588"
-                            },
-                            "ReversalRequest": {
-                                "SaleData": {
-                                    "SaleTransactionID": {
-                                        "TransactionID": "VERIFONE",
-                                        "TimeStamp": new Date().toISOString()
-                                    },
-                                    "CustomerOrderReq": [
-                                        "BOTH"
-                                    ],
-                                    "SaleToPOIData": JSON.stringify({
-                                        "c": last4Digits, 
-                                        "m": "MC",
-                                        "p": "DEBIT",
-                                        "i": "2222224",
-                                        "r": "CAPTURED",
-                                        "rc": "4",
-                                        "ts": "SUCCESS"
-                                    })
-                                },
-                                "OriginalPOITransaction": {
-                                    "SaleID": "VERIFONE",
-                                    "POIID": "807-766-588",
-                                    "POITransactionID": {
-                                        "TransactionID": last4Digits, 
-                                        "TimeStamp": new Date().toISOString()
-                                    }
-                                },
-                                "ReversalReason": "CUSTCANCEL",
-                                "CustomerOrder": {
-                                    "CustomerOrderID": "VERIFONE",
-                                    "StartDate": new Date().toISOString(),
-                                    "ForecastedAmount": 1.00,
-                                    "OpenOrderState": true,
-                                    "Currency": "USD"
-                                }
-                            }
-                        };
+                        if (result.MessageHeader && result.MessageHeader.MessageType === 'RESPONSE' && result.ReversalResponse) {
+                            const reversalResult = result.ReversalResponse.Response.Result;
 
-                        $.ajax({
-                            url: 'http://localhost:8000/payment/reversal',
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(requestBody),
-                            success: function (response) {
-                                console.log('responseresponseresponseresponseresponse',response)
-                                if (response.MessageHeader && response.MessageHeader.MessageType === 'RESPONSE' && response.ReversalResponse) {
-                                    const result = response.ReversalResponse.Response.Result;
-
-                                    if (result === 'SUCCESS') {
-                                        const successMessage = 'Reversal successful: ' + response.ReversalResponse.Response.Result;
-                                        closeLoaderModal(function (message) {
-                                            console.log('Success message:', message);
-                                            $('#successModal').modal('show');
-                                        }, successMessage);
-                                    } else {
-                                        const errorCondition = response.ReversalResponse.Response.ErrorCondition;
-                                        closeLoaderModal(function (message) {
-                                            console.log('Error condition:', errorCondition);
-                                            $('#errorMessage').text('Error: ' + errorCondition);
-                                            $('#errorModal').modal('show');
-                                        });
-                                    }
-                                } else {
-                                    const unknownStatusMessage = 'Unexpected response format.';
-                                    closeLoaderModal(function (message) {
-                                        console.log('Unknown status message:', message);
-                                        $('#unknownStatusModal').modal('show');
-                                    }, unknownStatusMessage);
-                                }
-                            },
-                            error: function () {
+                            if (reversalResult === 'SUCCESS') {
+                                const successMessage = 'Reversal successful: ' + reversalResult;
                                 closeLoaderModal(function () {
-                                    $('#errorModal').modal('show'); 
+                                    $('#successModal').modal('show');
+                                });
+                            } else {
+                                const errorCondition = result.ReversalResponse.Response.ErrorCondition;
+                                closeLoaderModal(function () {
+                                    $('#errorMessage').text('Error: ' + errorCondition);
+                                    $('#errorModal').modal('show');
                                 });
                             }
+                        } else {
+                            const unknownStatusMessage = 'Unexpected response format.';
+                            closeLoaderModal(function () {
+                                $('#unknownStatusModal').modal('show');
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        closeLoaderModal(function () {
+                            $('#errorModal').modal('show');
                         });
-                        
-
-                       
-
-
-                    // error: function () {
-                    //     closeLoaderModal(function () {
-                    //         $('#errorModal').modal('show'); // Handle AJAX error
-                    //     });
-                    // }
-         
+                    });
             });
+
 
             // Close the Debit Void modal when the Close button is clicked
             $('#closeVoid').on('click', function () {
@@ -1527,12 +1404,10 @@
                                 $('#successModal').modal('show');
                             }, successMessage);
                         } else if (response.status === 'error') {
-                            const errorMessage = response.message; // Get the error message from response
+                            const errorMessage = response.message;
                             closeLoaderModal(function (message) {
                                 console.log('Error message:', message);
-                                // Set the error message to the <h5> element inside the errorModal
-                                $('#errorMessage').text(message); // Bind the message to the <h5>
-                                // Show the error modal
+                                $('#errorMessage').text(message);
                                 $('#errorModal').modal('show');
                             }, errorMessage);
                         } else {
@@ -1585,12 +1460,9 @@
                                 $('#successModal').modal('show');
                             }, successMessage);
                         } else if (response.status === 'error') {
-                            const errorMessage = response.message; // Get the error message from response
+                            const errorMessage = response.message;
                             closeLoaderModal(function (message) {
-                                console.log('Error message:', message);
-                                // Set the error message to the <h5> element inside the errorModal
-                                $('#errorMessage').text(message); // Bind the message to the <h5>
-                                // Show the error modal
+                                $('#errorMessage').text(message);
                                 $('#errorModal').modal('show');
                             }, errorMessage);
                         } else {
@@ -1616,90 +1488,77 @@
 
             $('.square-btn[data-target="#EBTSaleModal"]').on('click', function (event) {
                 event.preventDefault();
-                const amount = $('#autoFocusInput').val();  
+
+                const amount = $('#autoFocusInput').val();
                 console.log("Entered Amount:", amount);
+
                 if (!amount) {
-                    alert('Please enter an amount for the void.');
+                    alert('Please enter an amount for the sale.');
                     return false;
                 }
+
                 const epi = getEpiFromUrl();
                 openLoaderModal();
 
                 const postData = {
-                    "MessageHeader": {
-                        "MessageClass": "SERVICE",
-                        "MessageCategory": "PAYMENT",
-                        "MessageType": "REQUEST",
-                        "ServiceID": "VERIFONE",
-                        "SaleID": "VERIFONE",
-                        "POIID": "807-766-588"
-                    },
-                    "PaymentRequest": {
-                        "SaleData": {
-                            "OperatorID": "VERIFONE",
-                            "SaleTransactionID": {
-                                "TransactionID": "VERIFONE",
-                                "TimeStamp": new Date().toISOString()  
-                            }
-                        },
-                        "PaymentTransaction": {
-                            "AmountsReq": {
-                                "Currency": "USD",
-                                "RequestedAmount": amount 
-                            },
-                            "TransactionConditions": {
-                                "VF_RequestedPaymentType": "EBT" 
-                            }
-                        },
-                        "PaymentData": {
-                            "PaymentType": "NORMAL",
-                            "SplitPaymentFlag": ""  
-                        }
-                    }
+                    "amount": amount
                 };
-                fetch('http://localhost:8000/payment/poscloud/nexo/payment', {
+
+                fetch('http://localhost:8000/payment/poscloud/nexo/ebt', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(postData),
                 })
-                .then(response => response.json())  
-                .then(result => {
-                    console.log(result)
-                    const paymentResponse = result.PaymentResponse;
-                    if (paymentResponse && paymentResponse.Response.Result === 'SUCCESS') {
-                        const successMessage = 'Transaction completed successfully';
-                        closeLoaderModal(function (message) {
-                            console.log('Success message:', message);
-                            $('#successModal').modal('show'); 
-                        }, successMessage);
-                    } else if (paymentResponse && paymentResponse.Response.Result === 'FAILURE') {
-                        const errorCondition = paymentResponse.Response.ErrorCondition;
-                        const additionalResponse = paymentResponse.Response.AdditionalResponse;
-                        const errorMessage = `Error: ${errorCondition} - ${additionalResponse}`;
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        console.log(result);
+                        const paymentResponse = result.PaymentResponse;
+
+
+                        if (paymentResponse && paymentResponse.Response.Result === 'SUCCESS') {
+                            const successMessage = 'Transaction completed successfully';
+                            closeLoaderModal(function (message) {
+                                console.log('Success message:', message);
+                                $('#successModal').modal('show');
+                            }, successMessage);
+                        }
+
+                        else if (paymentResponse && paymentResponse.Response.Result === 'FAILURE') {
+                            const errorCondition = paymentResponse.Response.ErrorCondition;
+                            const additionalResponse = paymentResponse.Response.AdditionalResponse;
+                            const errorMessage = `Error: ${errorCondition} - ${additionalResponse}`;
+                            closeLoaderModal(function () {
+                                console.log('Transaction failed: ' + errorCondition + ' - ' + additionalResponse);
+                                $('#errorMessage').text(errorMessage);
+                                $('#errorModal').modal('show');
+                            }, errorMessage);
+                        }
+
+                        else {
+                            const unknownStatusMessage = 'Unknown transaction status received';
+                            closeLoaderModal(function (message) {
+                                console.log('Unknown status message:', message);
+                                $('#unknownStatusModal').modal('show');
+                            }, unknownStatusMessage);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
                         closeLoaderModal(function () {
-                            console.log('Transaction failed: ' + errorCondition + ' - ' + additionalResponse);
-                            $('#errorMessage').text(errorMessage); 
-                            $('#errorModal').modal('show');  
-                        }, errorMessage);
-                    } else {
-                        const unknownStatusMessage = 'Unknown transaction status received';
-                        closeLoaderModal(function (message) {
-                            console.log('Unknown status message:', message);
-                            $('#unknownStatusModal').modal('show'); 
-                        }, unknownStatusMessage);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    closeLoaderModal(function () {
-                        const errorMessage = 'Error occurred during transaction';
-                        $('#errorMessage').text(errorMessage); 
-                        $('#errorModal').modal('show'); 
-                    }, 'Transaction Error');
-                });
+                            const errorMessage = 'Error occurred during transaction';
+                            $('#errorMessage').text(errorMessage);
+                            $('#errorModal').modal('show');
+                        }, 'Transaction Error');
+                    });
             });
+
 
 
             $('#EBTSaleMobileForm').on('submit', function (e) {
@@ -1731,12 +1590,12 @@
                                 $('#successModal').modal('show');
                             }, successMessage);
                         } else if (response.status === 'error') {
-                            const errorMessage = response.message; // Get the error message from response
+                            const errorMessage = response.message;
                             closeLoaderModal(function (message) {
                                 console.log('Error message:', message);
-                                // Set the error message to the <h5> element inside the errorModal
-                                $('#errorMessage').text(message); // Bind the message to the <h5>
-                                // Show the error modal
+
+                                $('#errorMessage').text(message);
+
                                 $('#errorModal').modal('show');
                             }, errorMessage);
                         } else {
@@ -1754,106 +1613,118 @@
                     // }
                 });
             });
-            // Close the Debit Void modal when the Close button is clicked
+
             $('#closeVoid').on('click', function () {
                 $('#debitVoidModal').modal('hide');
             });
 
-            $('#EBTRefundForm').on('submit', function(event) {
+            $('#EBTRefundForm').on('submit', function (event) {
                 event.preventDefault();
-                const refundDetails = $('#EBTRefundAmount').val();
-                if (!refundDetails) {
-                    alert('Please enter an amount for the refund.');
+
+
+                const refundAmount = $('#EBTRefundAmount').val();
+                console.log(refundAmount)
+
+                if (!refundAmount) {
+                    alert('Please enter the refund amount and the last 4 digits of the card.');
                     return;
                 }
-                console.log("Amount submitted:", refundDetails);
+
+                console.log("Refund submitted:", refundAmount);
                 $('#EBTRefundModal').modal('hide');
                 openEBTRefundLoaderModal();
 
-                const requestBody = {
-                    
-                    "MessageHeader": {
-                        "MessageClass": "SERVICE",
-                        "MessageCategory": "PAYMENT",
-                        "MessageType": "REQUEST",
-                        "ServiceID": "VERIFONE",
-                        "SaleID": "VERIFONE",
-                       "POIID": "807-766-588"
-                    },
-                    "PaymentRequest": {
-                        "SaleData": {
-                            "SaleTransactionID": {
-                                "TransactionID": "VERIFONE",
-                                "TimeStamp": "2019-08-21T16:35:05.073Z"
-                            },
-                            "CustomerOrderReq": null,
-                            "SaleToAcquirerData": null
-                        },
-                        "PaymentTransaction": {
-                            "AmountsReq": {
-                                "Currency": "USD",
-                                "RequestedAmount": refundDetails,
-                                "TipAmount": "0.00"
-                            },
-                            "TransactionConditions": {
-                                "VF_RequestedPaymentType": "EBT"
-                            }
-                        },
-                        "PaymentData": {
-                            "PaymentType": "REFUND"
-                        }
-                    }
-                
+
+                const postData = {
+                    "refundAmount": refundAmount,
                 };
 
-                $.ajax({
-                    url: 'http://localhost:8000/payment/poscloud/nexo/payment',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(requestBody),
-                    success: function (response) {
-                        const paymentResponse = response.PaymentResponse;
-                        console.log('Payment Response:', paymentResponse);
+
+                fetch('http://localhost:8000/payment/ebt/refund', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(postData),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        console.log('Result from server:', result);
+
+                        const paymentResponse = result.PaymentResponse;
                         if (paymentResponse && paymentResponse.Response.Result === 'SUCCESS') {
                             const successMessage = 'Transaction completed successfully';
-                            closeLoaderModal(function (message) {
-                                console.log('Success message:', message);
+                            closeLoaderModal(function () {
                                 $('#successModal').modal('show');
                             }, successMessage);
                         } else if (paymentResponse && paymentResponse.Response.Result === 'FAILURE') {
                             const errorCondition = paymentResponse.Response.ErrorCondition;
                             const additionalResponse = paymentResponse.Response.AdditionalResponse;
-                            closeLoaderModal(function (message) {
-                                console.log('Error message:', additionalResponse);
-                                $('#errorMessage').text(message); // Bind the message to the <h5>
+                            closeLoaderModal(function () {
+                                $('#errorMessage').text('Error: ' + additionalResponse);
                                 $('#errorModal').modal('show');
-                            }, additionalResponse);
+                            });
                         } else {
                             const unknownStatusMessage = 'Unknown transaction status received';
-                            closeLoaderModal(function (message) {
-                                console.log('Unknown status message:', message);
+                            closeLoaderModal(function () {
                                 $('#unknownStatusModal').modal('show');
-                            }, unknownStatusMessage);
+                            });
                         }
-                    },
-                    error: function (error) {
+                    })
+                    .catch(error => {
                         console.error('Error:', error);
                         closeLoaderModal(function () {
-                            const errorMessage = 'Error occurred during transaction';
-                            $('#errorMessage').text(errorMessage);
                             $('#errorModal').modal('show');
-                        }, 'Transaction Error');
-                    }
-                });
+                        });
+                    });
             });
 
-            // Close the Credit Refund modal when the Close button is clicked
+
             $('#closeRefund').on('click', function () {
                 $('#EBTRefundModal').modal('hide');
             });
-                    // Proceed with your code here
-        
+            $('#foodBalance').on('click', function (event) {
+                event.preventDefault();
+                openEBTBalanceInquiryLoaderModal();
+
+                fetch('http://localhost:8000/payment/balanceInquiry', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                })
+                    .then(response => response.json())
+                    .then(result => {
+
+                        if (result.MessageHeader && result.MessageHeader.MessageType === 'RESPONSE' && result.BalanceInquiryResponse) {
+                            const inquiryResult = result.BalanceInquiryResponse.Response.Result;
+
+                            if (inquiryResult === 'SUCCESS') {
+
+                                $('#displayEBTBalanceInquiryDetails').html('<span style="color: green; font-size:20px; font-weight:bold">Balance Inquiry Successful!</span>');
+                            } else {
+
+                                const errorCondition = result.BalanceInquiryResponse.Response.ErrorCondition;
+                                $('#displayEBTBalanceInquiryDetails').html('<span style="color: red; font-size:20px; font-weight:bold">Error: ' + errorCondition + '</span>');
+                            }
+                        } else {
+                            $('#displayEBTBalanceInquiryDetails').html('<span style="color: red; font-size:20px; font-weight:bold">Unknown status received</span>');
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+
+                        $('#displayEBTBalanceInquiryDetails').html('<span style="color: red; font-size:20px; font-weight:bold">Network Error. Please try again.</span>');
+                    });
+            });
         });
+
     </script>
 </body>
 
